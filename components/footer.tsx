@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-3 gap-12 mb-12">
           {/* Company Info */}
           <div>
-            <h3 className="text-xl font-bold mb-4">360 Distinct</h3>
+            <h3 className="text-xl font-bold mb-4">360 Distinct Real Estate Ltd</h3>
             <p className="text-sm opacity-90">
               Transforming dreams into enduring legacies through innovative luxury real estate development.
             </p>
@@ -77,7 +77,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-secondary-foreground/20 pt-8 text-center text-sm opacity-75">
-          <p>&copy; 2025 360 Distinct Real Estate Ltd. All rights reserved.</p>
+          <p>&copy; 2026 360 Distinct Real Estate Ltd. All rights reserved.</p>
         </div>
       </div>
     </footer>

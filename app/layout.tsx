@@ -12,7 +12,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "360 Distinct Real Estate Ltd. - Luxury Property Development",
   description: "Transform your dreams into enduring legacies. Premium residential properties in Lagos.",
-  generator: "v0.app",
+  generator: "360 Distinct Real Estate Ltd",
   icons: {
     icon: [
       {

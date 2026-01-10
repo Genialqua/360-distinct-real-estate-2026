@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function AlexAndBillPage() {
   const apartments = [
     {
-      type: "Terraces",
+      type: "4 Bedroom Terraces",
       bedrooms: 4,
       price: "₦200 Million",
       units: 13,
@@ -59,12 +59,12 @@ export default function AlexAndBillPage() {
     "/images/projects/alex-and-bill/1.jpg",
     "/images/projects/alex-and-bill/2.jpg",
     "/images/projects/alex-and-bill/3.jpg",
-    "/images/projects/alex-and-bill/4.jpg",
-    "/images/projects/alex-and-bill/5.jpg",
-    "/images/projects/alex-and-bill/7.jpg",
-    "/images/projects/alex-and-bill/9.jpg",
-    "/images/projects/alex-and-bill/10.jpg",
-    "/images/projects/alex-and-bill/11.jpg",
+    //"/images/projects/alex-and-bill/4.jpg",
+    //"/images/projects/alex-and-bill/5.jpg",
+    //"/images/projects/alex-and-bill/7.jpg",
+    //"/images/projects/alex-and-bill/9.jpg",
+    //"/images/projects/alex-and-bill/10.jpg",
+    //"/images/projects/alex-and-bill/11.jpg",
   ]
 
   const galleryVideos = [

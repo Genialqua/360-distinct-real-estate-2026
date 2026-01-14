@@ -26,4 +26,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Never use pnpm in this project
 pnpm-lock.yaml

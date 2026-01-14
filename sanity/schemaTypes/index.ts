@@ -11,6 +11,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
 
 import { property } from "./property"
 //import { post } from './post'
-import { comment } from "./comment"
+import comment  from "./comment"
 
 export const schemaTypes = [property, comment]

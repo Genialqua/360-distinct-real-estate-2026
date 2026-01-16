@@ -1,41 +1,54 @@
 import { PortableText } from "@portabletext/react"
-import { createImageUrlBuilder } from "@sanity/image-url"
+import { client } from "@/sanity/lib/client"
+import { urlFor } from "@/sanity/lib/image"
 import Image from "next/image"
-import { sanityClient } from "@/lib/sanity.client"
-import { projectId, dataset } from "@/sanity/env"
 
-export const revalidate = 60 // ISR (revalidate every 60 seconds)
-
-/* ---------------------------------------------
-   Sanity Image Builder
---------------------------------------------- */
-const builder = createImageUrlBuilder({ projectId, dataset })
-const urlFor = (source: any) => builder.image(source)
+export const revalidate = 60
 
 /* ---------------------------------------------
    Types
 --------------------------------------------- */
-type PageProps = {
-  params: Promise<{ slug: string }>
+type BlogPost = {
+  _id: string
+  title: string
+  content: any[]
+  coverImage?: any
+  publishedAt: string
+  author?: {
+    name: string
+    bio?: string
+    avatar?: any
+  }
+}
+
+type Comment = {
+  _id: string
+  name: string
+  message: string
+  _createdAt: string
 }
 
 /* ---------------------------------------------
    Page
 --------------------------------------------- */
-export default async function BlogPage({ params }: PageProps) {
+export default async function BlogPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
   const { slug } = await params
 
   /* ---------------------------------------------
      Fetch Blog Post + Author
   --------------------------------------------- */
-  const post = await sanityClient.fetch(
+  const post: BlogPost | null = await client.fetch(
     `
     *[_type == "blog" && slug.current == $slug][0]{
       _id,
       title,
-      publishedAt,
-      coverImage,
       content,
+      coverImage,
+      publishedAt,
       author->{
         name,
         bio,
@@ -46,19 +59,14 @@ export default async function BlogPage({ params }: PageProps) {
     { slug }
   )
 
-  if (!post) {
-    return <div className="p-10">Post not found</div>
-  }
+  if (!post) return <div className="p-10">Post not found</div>
 
   /* ---------------------------------------------
      Fetch Approved Comments
   --------------------------------------------- */
-  const comments = await sanityClient.fetch(
+  const comments: Comment[] = await client.fetch(
     `
-    *[_type == "comment"
-      && post._ref == $postId
-      && approved == true
-    ] | order(_createdAt desc){
+    *[_type == "comment" && post._ref == $postId && approved == true] | order(_createdAt desc){
       _id,
       name,
       message,
@@ -72,13 +80,10 @@ export default async function BlogPage({ params }: PageProps) {
      Render
   --------------------------------------------- */
   return (
-    <article className="max-w-3xl mx-auto px-4 py-10">
-      {/* Title */}
-      <h1 className="text-4xl font-bold mb-6">{post.title}</h1>
-
+    <main className="max-w-3xl mx-auto px-4 py-10">
       {/* Author */}
       {post.author && (
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-6">
           {post.author.avatar?.asset && (
             <Image
               src={urlFor(post.author.avatar).width(80).height(80).url()}
@@ -91,7 +96,7 @@ export default async function BlogPage({ params }: PageProps) {
           <div>
             <p className="font-semibold">{post.author.name}</p>
             {post.author.bio && (
-              <p className="text-sm text-gray-600">{post.author.bio}</p>
+              <p className="text-gray-500 text-sm">{post.author.bio}</p>
             )}
           </div>
         </div>
@@ -108,59 +113,61 @@ export default async function BlogPage({ params }: PageProps) {
         />
       )}
 
+      {/* Title */}
+      <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+
+      {/* Published Date */}
+      <p className="text-gray-500 mb-8">
+        Published on {new Date(post.publishedAt).toLocaleDateString()}
+      </p>
+
       {/* Content */}
-      <PortableText
-        value={post.content}
-        components={{
-          types: {
-            image: ({ value }) => {
-              if (!value?.asset) return null
-
-              return (
-                <Image
-                  src={urlFor(value).width(800).url()}
-                  alt=""
-                  width={800}
-                  height={500}
-                  className="rounded-lg my-6"
-                />
-              )
+      <div className="prose prose-lg max-w-none">
+        <PortableText
+          value={post.content}
+          components={{
+            types: {
+              image: ({ value }) =>
+                value?.asset ? (
+                  <img
+                    src={urlFor(value).width(800).url()}
+                    alt={value.alt || "Blog image"}
+                    className="rounded-lg my-6"
+                  />
+                ) : null,
+              videoBlock: ({ value }) => (
+                <div className="my-8">
+                  {value.title && (
+                    <h3 className="font-semibold mb-2">{value.title}</h3>
+                  )}
+                  <video
+                    src={value.url}
+                    controls
+                    className="w-full rounded-lg"
+                  />
+                </div>
+              ),
             },
-
-            videoBlock: ({ value }) => (
-              <div className="my-8">
-                <video
-                  controls
-                  className="rounded-xl w-full"
-                >
-                  <source src={value.url} />
-                </video>
-                {value.title && (
-                  <p className="text-sm text-gray-500 mt-2">{value.title}</p>
-                )}
-              </div>
-            ),
-          },
-        }}
-      />
+          }}
+        />
+      </div>
 
       {/* Comments */}
       <section className="mt-16">
         <h2 className="text-2xl font-bold mb-6">Comments</h2>
-
-        {comments.length === 0 && (
+        {comments.length === 0 ? (
           <p className="text-gray-500">No comments yet.</p>
+        ) : (
+          <ul className="space-y-6">
+            {comments.map((comment) => (
+              <li key={comment._id} className="border-b pb-4">
+                <p className="font-semibold">{comment.name}</p>
+                <p className="text-gray-700">{comment.message}</p>
+              </li>
+            ))}
+          </ul>
         )}
-
-        <ul className="space-y-6">
-          {comments.map((comment: any) => (
-            <li key={comment._id} className="border-b pb-4">
-              <p className="font-semibold">{comment.name}</p>
-              <p className="text-gray-700">{comment.message}</p>
-            </li>
-          ))}
-        </ul>
       </section>
-    </article>
+    </main>
   )
 }

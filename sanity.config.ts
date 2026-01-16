@@ -12,7 +12,7 @@ import { structureTool } from 'sanity/structure'
 import { apiVersion, dataset, projectId } from './sanity/env'
 
 // Schemas and structure
-import { schemaTypes } from './sanity/schema' // fixed export
+import { schemaTypes } from './sanity/schema' 
 import { structure } from './sanity/structure'
 
 export default defineConfig({

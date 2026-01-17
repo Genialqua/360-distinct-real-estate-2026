@@ -18,8 +18,19 @@ export const blog = defineType({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: { source: "title", maxLength: 96 },
+      options: {
+        source: "title",
+        maxLength: 96,
+      },
       validation: (Rule) => Rule.required(),
+    }),
+
+    // ✅ FIX: Published date (controls what shows on your site)
+    defineField({
+      name: "publishedAt",
+      title: "Published At",
+      type: "datetime",
+      initialValue: () => new Date().toISOString(),
     }),
 
     defineField({
@@ -59,6 +70,7 @@ export const blog = defineType({
               type: "url",
               validation: (Rule) => Rule.required(),
             }),
+
             defineField({
               name: "title",
               title: "Title",

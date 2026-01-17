@@ -2,6 +2,8 @@ import { PortableText } from "@portabletext/react"
 import { client } from "@/sanity/lib/client"
 import { urlFor } from "@/sanity/lib/image"
 import Image from "next/image"
+import CommentForm from '@/components/CommentForm'
+
 
 export const revalidate = 60
 
@@ -13,7 +15,7 @@ type BlogPost = {
   title: string
   content: any[]
   coverImage?: any
-  publishedAt: string
+  publishedAt: Date
   author?: {
     name: string
     bio?: string
@@ -25,7 +27,7 @@ type Comment = {
   _id: string
   name: string
   message: string
-  _createdAt: string
+  _createdAt: Date
 }
 
 /* ---------------------------------------------
@@ -167,7 +169,9 @@ export default async function BlogPage({
             ))}
           </ul>
         )}
+        <CommentForm postId={post._id} />
       </section>
     </main>
   )
 }
+
